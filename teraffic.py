@@ -1,17 +1,26 @@
 #! /usr/bin/python
 
 import sys
-import netifaces
 import subprocess
+
+try:
+	import netifaces
+except ImportError:
+	print("Missing dependency: netifaces")
+	exit()
 
 try:
 	interface = sys.argv[1]
 except IndexError:
-	print("Could not find interface \"\"")
+	print("Usage: ./teraffic.py <interface> [--raw, --in, --out]") # Show usage with no arguments
 	exit()
 
-outgoing = open('/sys/class/net/' + interface + '/statistics/tx_bytes', 'r').read() # Get 
-incoming = open('/sys/class/net/' + interface + '/statistics/rx_bytes', 'r').read()
+try:
+	outgoing = open('/sys/class/net/' + interface + '/statistics/tx_bytes', 'r').read() # Get 
+	incoming = open('/sys/class/net/' + interface + '/statistics/rx_bytes', 'r').read()
+except IOError: # Make sure interface exists
+	print("Could not find interface \"" + interface + "\"")
+	exit()
 
 def getuptime():
     raw = subprocess.check_output('uptime').replace(',','')
@@ -30,26 +39,24 @@ def printtotalfancy():
 		print("Incoming: " + str(int(incoming) / 1000000000) + "GB")
 		print("Outgoing: " + str(int(outgoing) / 1000000000) + "GB")
 	else:
-		print("Could not find interface \"" + interface + "\"")
+		print("Could not find interface \"" + interface + "\"") # Failsafe for previous IOError
 
 if len(sys.argv) == 2:
 	printtotalfancy()
 
 if "--in" in sys.argv:
-	if "--raw" not in sys.argv:
+	if "--raw" not in sys.argv: # If --raw option is not present, format the output
 		print(str(int(incoming) / 1000000000) + "GB")
+	else:
+		print(incoming.strip())
+
 if "--out" in sys.argv:
 	if "--raw" not in sys.argv:
 		print(str(int(outgoing) / 1000000000) + "GB")
+	else:
+		print(outgoing.strip())
 
 if "--raw" in sys.argv:
-	if "--in" in sys.argv:
-		print(incoming.strip())
-	if "--out" in sys.argv:
-		print(outgoing.strip())
-	else:
+	if len(sys.argv) == 3:
 		print(incoming.strip())
 		print(outgoing.strip())
-
-
-
