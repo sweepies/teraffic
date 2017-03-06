@@ -3,4 +3,5 @@
   "group": "stable",
   "dist": "xenial",
   "os": "linux"
+  "install": "python setup.py install"
 }
