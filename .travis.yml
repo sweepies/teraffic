@@ -2,6 +2,6 @@
   "language": "python",
   "group": "stable",
   "dist": "xenial",
-  "os": "linux"
+  "os": "linux",
   "install": "python setup.py install"
 }
