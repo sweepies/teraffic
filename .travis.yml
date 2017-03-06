@@ -1,9 +1,0 @@
-language: python
-group: stable
-dist: xenial
-os: linux
-install: 
- - python setup.py install
- - pip install pytest
-script:
- - pytest
