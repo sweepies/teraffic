@@ -1,7 +1,8 @@
-#! /usr/bin/python
+#!/usr/bin/python
 
 import sys
 import subprocess
+from optparse import OptionParser
 
 try:
 	import netifaces
@@ -9,10 +10,17 @@ except ImportError:
 	print("Missing dependency: netifaces")
 	exit()
 
+parser = OptionParser()
+
+parser.add_option("-r", "--raw", help="don't format the number of bytes", action="store_true")
+parser.add_option("-i", "--in", help="only show ingress traffic", action="store_true", dest="ingress")
+parser.add_option("-o", "--out", help="only show egress traffic", action="store_true")
+(options, args) = parser.parse_args()
+
 try:
-	interface = sys.argv[1]
+	interface = args[0]
 except IndexError:
-	print("Usage: ./teraffic.py <interface> [--raw, --in, --out]") # Show usage with no arguments
+	print("Usage: teraffic.py --help") # Show usage with no arguments
 	exit()
 
 try:
@@ -41,22 +49,30 @@ def printtotalfancy():
 	else:
 		print("Could not find interface \"" + interface + "\"") # Failsafe for previous IOError
 
-if len(sys.argv) == 2:
-	printtotalfancy()
+non_default_output = None
 
-if "--in" in sys.argv:
-	if "--raw" not in sys.argv: # If --raw option is not present, format the output
+if options.ingress:
+	if not options.raw: # If --raw option is not present, format the output
 		print(str(int(incoming) / 1000000000) + "GB")
+		non_default_output = True
 	else:
 		print(incoming.strip())
+		non_default_output = True
 
-if "--out" in sys.argv:
-	if "--raw" not in sys.argv:
+if options.out:
+	if not options.raw:
 		print(str(int(outgoing) / 1000000000) + "GB")
+		non_default_output = True
 	else:
 		print(outgoing.strip())
+		non_default_output = True
 
-if "--raw" in sys.argv:
-	if len(sys.argv) == 3:
-		print(incoming.strip())
-		print(outgoing.strip())
+if options.raw:
+	if not options.out:
+		if not options.ingress:
+			print(incoming.strip())
+			print(outgoing.strip())
+			non_default_output = True
+
+if not non_default_output:
+	printtotalfancy()
