@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
-import sys
-import subprocess
 from optparse import OptionParser
+from uptime import uptime
 
 try:
 	import netifaces
 except ImportError:
 	print("Missing dependency: netifaces")
+	print("Run 'setup.py install' to install all required packages.")
 	exit()
 
 def main():
@@ -22,34 +22,27 @@ def main():
 	try:
 		interface = args[0]
 	except IndexError:
-		print("Usage: teraffic.py --help") # Show usage with no arguments
+		print("Usage: teraffic.py <interface> [options]") # Show usage with no arguments
+		print("Run 'teraffic.py --help' for more information.")
 		exit()
 
 	try:
 		outgoing = open('/sys/class/net/' + interface + '/statistics/tx_bytes', 'r').read() # Get 
 		incoming = open('/sys/class/net/' + interface + '/statistics/rx_bytes', 'r').read()
 	except IOError: # Make sure interface exists
-		print("Could not find interface \"" + interface + "\"")
+		print("Could not find network interface '" + interface + "'")
+		print("Run 'ifconfig' to view all interfaces.")
 		exit()
-
-	def getuptime():
-		raw = subprocess.check_output('uptime').replace(',','')
-		days = int(raw.split()[2])
-		if 'min' in raw:
-			hours = 0
-			minutes = int(raw[4])
-		else:
-			hours, minutes = map(int,raw.split()[4].split(':'))
-		totalsecs = days*24*60*60 + hours*60*60 + minutes*60    
-		return totalsecs
 
 	def printtotalfancy():
 		if interface in netifaces.interfaces():
-			print("Total network traffic on " + interface + " since last boot (~" + str(getuptime() / 60 / 60 / 24) + " days):\n")
+			print("Total network traffic on " + interface + " since last boot (~" + str(int(uptime()) / 60 / 60 / 24) + " days):\n")
 			print("Incoming: " + str(int(incoming) / 1000000000) + "GB")
 			print("Outgoing: " + str(int(outgoing) / 1000000000) + "GB")
 		else:
-			print("Could not find interface \"" + interface + "\"") # Failsafe for previous IOError
+			print("Could not find network interface '" + interface + "'")
+			print("Run 'ifconfig' to view all interfaces.")
+			exit() # Failsafe for previous IOError
 
 
 	non_default_output = None
