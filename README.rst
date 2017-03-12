@@ -7,9 +7,8 @@ the last boot.
 Installation
 ------------
 
-Clone with git and run ``setup.py install``
--or-
-Install from PyPI_: ``pip install teraffic``
+* Clone with git and run ``setup.py install``
+*Install from PyPI_: ``pip install teraffic``
 
 .. _PyPI: https://pypi.python.org/pypi/Teraffic/
 
