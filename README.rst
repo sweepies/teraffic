@@ -5,10 +5,11 @@ This utility provides an easy way of viewing total network traffic since
 the last boot.
 
 Installation
------
+------------
 
-1. Clone with git or download source from PyPI_
-2. Run setup.py
+Clone with git and run ``setup.py install``
+-or-
+Install from PyPI_: ``pip install teraffic``
 
 .. _PyPI: https://pypi.python.org/pypi/Teraffic/
 
