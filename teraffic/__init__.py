@@ -12,8 +12,9 @@ except ImportError:
 
 def main():
 
-	parser = OptionParser()
-
+	usage = "Usage: %prog <network interface> [options]"
+	parser = OptionParser(usage = usage)
+	
 	parser.add_option("-r", "--raw", help="don't format the number of bytes", action="store_true")
 	parser.add_option("-i", "--in", help="only show ingress traffic", action="store_true", dest="ingress")
 	parser.add_option("-o", "--out", help="only show egress traffic", action="store_true")

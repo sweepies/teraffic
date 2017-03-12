@@ -17,7 +17,7 @@ Usage
 -----
 
 Usage: 
-  teraffic.py <interface> [options]
+  teraffic.py <network interface> [options]
 
 Options:
   -h, --help  show this help message and exit
